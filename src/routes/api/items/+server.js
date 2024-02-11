@@ -4,13 +4,13 @@ import { json } from "@sveltejs/kit";
 import { errorWrongType, errorNotFound } from "./errorMessage.const.js";
 
 export const GET = async ({ url }) => {
-  const imputQuery = url?.searchParams?.get("q") || undefined;
+  const inputQuery = url?.searchParams?.get("q") || undefined;
   const regex = /[a-zA-Z]{3,100}/;
   try {
-    if (!regex.test(imputQuery)) {
+    if (!regex.test(inputQuery)) {
       return json(errorWrongType);
     }
-    const productsSelected = getMatchedProducts(productsInfo, imputQuery);
+    const productsSelected = getMatchedProducts(productsInfo, inputQuery);
 
     return handleResult(productsSelected);
   } catch (error) {
@@ -28,9 +28,9 @@ const handleResult = (productsResult = []) => {
     return json(errorNotFound);
   }
 };
-const getMatchedProducts = (productsInfo = {}, imput = "") => {
+const getMatchedProducts = (productsInfo = {}, input = "") => {
   const results = productsInfo.products?.filter((item) => {
-    JSON.stringify(item).toLowerCase().includes(imput.toLowerCase());
+    JSON.stringify(item).toLowerCase().includes(input.toLowerCase());
   });
   return results;
 };
