@@ -6,14 +6,16 @@ import { errorWrongType, errorNotFound } from "./errorMessage.const.js";
 export const GET = async ({ url }) => {
   const imputQuery = url?.searchParams?.get("q") || undefined;
   const regex = /[a-zA-Z]{3,100}/;
-  if (!regex.test(imputQuery)) {
-    return json(errorWrongType);
-  }
-  const productsSelected = productsInfo.products.filter((item) =>
-    JSON.stringify(item).toLowerCase().includes(imputQuery.toLowerCase())
-  );
+  try {
+    if (!regex.test(imputQuery)) {
+      return json(errorWrongType);
+    }
+    const productsSelected = getMatchedProducts(productsInfo, imputQuery);
 
-  return handleResult(productsSelected);
+    return handleResult(productsSelected);
+  } catch (error) {
+    return json(error.message);
+  }
 };
 
 const handleResult = (productsResult = []) => {
@@ -25,4 +27,10 @@ const handleResult = (productsResult = []) => {
   } else {
     return json(errorNotFound);
   }
+};
+const getMatchedProducts = (productsInfo = {}, imput = "") => {
+  const results = productsInfo.products?.filter((item) => {
+    JSON.stringify(item).toLowerCase().includes(imput.toLowerCase());
+  });
+  return results;
 };
